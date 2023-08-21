@@ -1,7 +1,8 @@
 class CjkNamePart {
-    // I've committed this dict files to the repo.
+    // I've committed these dict files to the repo.
     static dict: Record<string, Record<string, CjkNamePart>> = {
-        "chinese": require('./all.dict.json')
+        // It'll be more convenient if I need to add zh-HK or zh-SG in the future.
+        "chinese": [...require('./zh-CN/merged.dict.json'), ...require('./zh-TW/merged.dict.json')]
             .reduce((acc: Record<string, CjkNamePart>, name: CjkNamePart) => ({
                 ...acc,
                 [name.name]: name
@@ -29,21 +30,25 @@ class CjkName {
         this.isName = false;
     }
 
-    public getFullName(): CjkNamePart {
-        return new CjkNamePart(this.familyName.name + this.givenName.name, this.familyName.pinyin + ' ' + this.givenName.pinyin);
+    // I don't think any native Chinese would like to split a name though.
+    public getFullName(splitter: string = ''): string {
+        return this.familyName.name + splitter + this.givenName.name;
+    }
+
+    public getFullNamePinyin(splitter: string = ' '): string {
+        return this.familyName.pinyin + splitter + this.givenName.pinyin;
     }
 }
 
-function splitName(name: string, lang: string, allowDoubleFamilyName: boolean): CjkName {
+function splitName(name: string, lang: string, allowDoubleFamilyName: boolean, doubleFamilyNameSplitter: string = '-'): CjkName {
     let nameCandidate = new CjkName();
 
     for (let splitIndex = 2; splitIndex > 0; splitIndex--) {
-        
+
         let familyNameCandidate = CjkNamePart.dict[lang][name.slice(0, splitIndex)];
-        let givenNameCandidateStr = name.slice(splitIndex);
-        
         // pinyin should be called only once, since I don't know how much time it consumes.
-        // let givenNameCandidate = new CjkNamePart(name, ''); // To be changed here. Call pinyin over name.
+        // let givenNameCandidate = new CjkNamePart(name.slice(splitIndex), ''); // To be changed here. Call pinyin over name.
+        let givenNameCandidateStr = name.slice(splitIndex);
 
         if (!familyNameCandidate) {
             continue;
@@ -55,22 +60,23 @@ function splitName(name: string, lang: string, allowDoubleFamilyName: boolean): 
         if (allowDoubleFamilyName) {
             let restName = splitName(givenNameCandidateStr, lang, false);
             if (restName.isName) {
+                // Though the standard requires, I think this splitter (doubleFamilyNameSplitter = '-') can be changed.
                 nameCandidate.familyName = new CjkNamePart(
                     familyNameCandidate.name + restName.familyName.name,
-                    familyNameCandidate.pinyin + '-' + restName.familyName.pinyin); // Though the standard requires, I think this splitter '-' can be changed.
+                    familyNameCandidate.pinyin + doubleFamilyNameSplitter + restName.familyName.pinyin);
                 nameCandidate.givenName = restName.givenName;
                 return nameCandidate;
             }
         }
 
         nameCandidate.familyName = familyNameCandidate;
-        nameCandidate.givenName = new CjkNamePart(givenNameCandidateStr, ''); // To be changed here. Call pinyin over the given name.
+        nameCandidate.givenName = new CjkNamePart(givenNameCandidateStr, ''); // TODO: Call pinyin over givenNameCandidateStr.
         return nameCandidate;
     }
 
     // Alibaba problem solved here.
     // Names of legal entities should be family name, I think.
-    nameCandidate.familyName = new CjkNamePart(name, ''); // To be changed here. Call pinyin over name.
+    nameCandidate.familyName = new CjkNamePart(name, ''); // TODO: Call pinyin over name.
     return nameCandidate;
 }
 
@@ -84,6 +90,7 @@ function formatCjkName(name: string, lang: string): CjkName {
         throw new Error('Unknown language.');
     }
 
+    // TODO: I'm going to add Korean support after finding / building a usable jieba wasm library.
     return splitName(name, lang, true);
 }
 
