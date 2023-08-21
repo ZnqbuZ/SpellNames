@@ -1,4 +1,11 @@
 class CjkNamePart {
+    // I've committed this dict files to the repo.
+    static chinese_all: Record<string, CjkNamePart> = require('./all.dict.json')
+        .reduce((acc: Record<string, CjkNamePart>, name: CjkNamePart) => ({
+            ...acc,
+            [name.name]: name
+        }), {} as Record<string, CjkNamePart>);
+
     name: string;
     pinyin: string;
 
@@ -9,12 +16,9 @@ class CjkNamePart {
 }
 
 class CjkName {
-    // I've committed this dict files to the repo.
-    static surname_dict: CjkNamePart[] = require('./all.dict.json');
-
     familyName: CjkNamePart;
     givenName: CjkNamePart;
-    
+
     isName: boolean;
 
     constructor() {
@@ -30,40 +34,38 @@ class CjkName {
 
 function splitName(name: string, initial: boolean): CjkName {
     let nameCandidate = new CjkName();
-    
+
     for (let splitIndex = 2; splitIndex > 0; splitIndex--) {
-        
-        let familyNameCandidate = name.slice(0, splitIndex);
-        let givenNameCandidate = name.slice(splitIndex);
-        
-        for (let surname of CjkName.surname_dict) {
-            
-            if (surname.name === familyNameCandidate) {
-                nameCandidate.isName = true;
 
-                // Requirement from the standard files.
-                if (initial) {
-                    let restName = splitName(givenNameCandidate, false);
-                    if (restName.isName) {
-                        let familyName = new CjkNamePart(
-                            familyNameCandidate + restName.familyName.name,
-                            surname.pinyin + '-' + restName.familyName.pinyin); // Though the standard requires, I think this splitter '-' can be changed.
-                        nameCandidate.familyName = familyName;
-                        nameCandidate.givenName = restName.givenName;
-                        nameCandidate.isName = true;
-                        return nameCandidate;
-                    }
-                }
+        let familyNameCandidateStr = name.slice(0, splitIndex);
+        let givenNameCandidateStr = name.slice(splitIndex);
 
-                nameCandidate.familyName = surname;
-                nameCandidate.givenName = new CjkNamePart(givenNameCandidate, ''); // To be change here. Call pinyin over the given name.
+        let familyNameCandidate = CjkNamePart.chinese_all[familyNameCandidateStr];
+        if (!familyNameCandidate) {
+            continue;
+        }
+
+        nameCandidate.isName = true;
+
+        // Requirement from the standard files.
+        if (initial) {
+            let restName = splitName(givenNameCandidateStr, false);
+            if (restName.isName) {
+                nameCandidate.familyName = new CjkNamePart(
+                    familyNameCandidate.name + restName.familyName.name,
+                    familyNameCandidate.pinyin + '-' + restName.familyName.pinyin); // Though the standard requires, I think this splitter '-' can be changed.
+                nameCandidate.givenName = restName.givenName;
                 return nameCandidate;
             }
         }
+
+        nameCandidate.familyName = familyNameCandidate;
+        nameCandidate.givenName = new CjkNamePart(givenNameCandidateStr, ''); // To be changed here. Call pinyin over the given name.
+        return nameCandidate;
     }
 
     // Alibaba problem. Solved here.
-    nameCandidate.givenName = new CjkNamePart(name, ''); // To be change here. Call pinyin over name.
+    nameCandidate.givenName = new CjkNamePart(name, ''); // To be changed here. Call pinyin over name.
     return nameCandidate;
 }
 
@@ -81,8 +83,9 @@ function formatCjkName(name: string, lang: string): CjkName {
 }
 
 console.log(formatCjkName('张三', 'chinese'));
-console.log(formatCjkName('刘李四', 'chinese'));
+console.log(formatCjkName('陈李四', 'chinese'));
 console.log(formatCjkName('欧阳王五', 'chinese'));
+console.log(formatCjkName('刘六六六', 'chinese'));
 console.log(formatCjkName('诸葛亮', 'chinese'));
 console.log(formatCjkName('东方不败', 'chinese'));
 console.log(formatCjkName('阿里巴巴', 'chinese'));
