@@ -1,10 +1,12 @@
 class CjkNamePart {
     // I've committed this dict files to the repo.
-    static chinese_all: Record<string, CjkNamePart> = require('./all.dict.json')
-        .reduce((acc: Record<string, CjkNamePart>, name: CjkNamePart) => ({
-            ...acc,
-            [name.name]: name
-        }), {} as Record<string, CjkNamePart>);
+    static dict: Record<string, Record<string, CjkNamePart>> = {
+        "chinese": require('./all.dict.json')
+            .reduce((acc: Record<string, CjkNamePart>, name: CjkNamePart) => ({
+                ...acc,
+                [name.name]: name
+            }), {} as Record<string, CjkNamePart>)
+    };
 
     name: string;
     pinyin: string;
@@ -32,15 +34,17 @@ class CjkName {
     }
 }
 
-function splitName(name: string, initial: boolean): CjkName {
+function splitName(name: string, lang: string, allowDoubleFamilyName: boolean): CjkName {
     let nameCandidate = new CjkName();
 
     for (let splitIndex = 2; splitIndex > 0; splitIndex--) {
-
-        let familyNameCandidateStr = name.slice(0, splitIndex);
+        
+        let familyNameCandidate = CjkNamePart.dict[lang][name.slice(0, splitIndex)];
         let givenNameCandidateStr = name.slice(splitIndex);
+        
+        // pinyin should be called only once, since I don't know how much time it consumes.
+        // let givenNameCandidate = new CjkNamePart(name, ''); // To be changed here. Call pinyin over name.
 
-        let familyNameCandidate = CjkNamePart.chinese_all[familyNameCandidateStr];
         if (!familyNameCandidate) {
             continue;
         }
@@ -48,8 +52,8 @@ function splitName(name: string, initial: boolean): CjkName {
         nameCandidate.isName = true;
 
         // Requirement from the standard files.
-        if (initial) {
-            let restName = splitName(givenNameCandidateStr, false);
+        if (allowDoubleFamilyName) {
+            let restName = splitName(givenNameCandidateStr, lang, false);
             if (restName.isName) {
                 nameCandidate.familyName = new CjkNamePart(
                     familyNameCandidate.name + restName.familyName.name,
@@ -64,8 +68,9 @@ function splitName(name: string, initial: boolean): CjkName {
         return nameCandidate;
     }
 
-    // Alibaba problem. Solved here.
-    nameCandidate.givenName = new CjkNamePart(name, ''); // To be changed here. Call pinyin over name.
+    // Alibaba problem solved here.
+    // Names of legal entities should be family name, I think.
+    nameCandidate.familyName = new CjkNamePart(name, ''); // To be changed here. Call pinyin over name.
     return nameCandidate;
 }
 
@@ -76,10 +81,10 @@ function formatCjkName(name: string, lang: string): CjkName {
     // Just query the name in both zh-CN and zh-TW. Should not affect the result.
     // It's possible a user enter a zh-TW author name in a zh-CN item, or vice versa.
     if (lang !== 'chinese') {
-        throw new Error('Not Chinese');
+        throw new Error('Unknown language.');
     }
 
-    return splitName(name, true);
+    return splitName(name, lang, true);
 }
 
 console.log(formatCjkName('张三', 'chinese'));
