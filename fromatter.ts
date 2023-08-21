@@ -89,3 +89,11 @@ console.log(formatCjkName('刘六六六', 'chinese'));
 console.log(formatCjkName('诸葛亮', 'chinese'));
 console.log(formatCjkName('东方不败', 'chinese'));
 console.log(formatCjkName('阿里巴巴', 'chinese'));
+
+console.log(formatCjkName('張三', 'chinese'));
+console.log(formatCjkName('陳李四', 'chinese'));
+console.log(formatCjkName('歐陽王五', 'chinese'));
+console.log(formatCjkName('劉六六六', 'chinese'));
+console.log(formatCjkName('諸葛亮', 'chinese'));
+console.log(formatCjkName('東方不敗', 'chinese'));
+console.log(formatCjkName('阿裡巴巴', 'chinese'));
