@@ -35,6 +35,7 @@ class CjkName {
         return this.familyName.name + splitter + this.givenName.name;
     }
 
+    // But we do need to split the translation.
     public getFullNamePinyin(splitter: string = ' '): string {
         return this.familyName.pinyin + splitter + this.givenName.pinyin;
     }
