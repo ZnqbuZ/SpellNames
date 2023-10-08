@@ -1,34 +1,34 @@
 [
     {
         "name": "钟",
-        "pinyin": "Zhong"
+        "transliteration": "Zhong"
     },
     {
         "name": "曲",
-        "pinyin": "Qu"
+        "transliteration": "Qu"
     },
     {
         "name": "宁",
-        "pinyin": "Ning"
+        "transliteration": "Ning"
     },
     {
         "name": "却",
-        "pinyin": "Que"
+        "transliteration": "Que"
     },
     {
         "name": "钟离",
-        "pinyin": "ZhongLi"
+        "transliteration": "ZhongLi"
     },
     {
         "name": "丌官",
-        "pinyin": "QiGuan"
+        "transliteration": "QiGuan"
     },
     {
         "name": "谷梁",
-        "pinyin": "GuLiang"
+        "transliteration": "GuLiang"
     },
     {
         "name": "郈",
-        "pinyin": "Hou"
+        "transliteration": "Hou"
     }
 ]
