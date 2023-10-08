@@ -1,0 +1,11 @@
+{
+  "name": "spellnames-example",
+  "description": "",
+  "main": "example.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "spellnames": "latest"
+  }
+}
