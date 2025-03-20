@@ -18,11 +18,11 @@ export class CjkNamePart extends CjkNamePartBase {
     // I've committed these dict files to the repo.
     static dict: Record<Language, Record<string, CjkNamePart>> = {
         // It'll be more convenient if I need to add zh-HK or zh-SG in the future.
-        Chinese: [...require('./zh-CN/merged.dict.json'), ...require('./zh-TW/merged.dict.json')]
-            .reduce((acc: Record<string, CjkNamePart>, name: CjkNamePartBase) => ({
-                ...acc,
-                [name.name]: new CjkNamePart(name.name, name.transliteration, Language.Chinese)
-            }), {} as Record<string, CjkNamePart>),
+        Chinese: [...require('../assets/zh-CN/merged.dict.json'), ...require('../assets/zh-TW/merged.dict.json')]
+            .reduce((acc: Record<string, CjkNamePart>, {n, t}) => {
+                acc[n] = new CjkNamePart(n, t, Language.Chinese);
+                return acc;
+            }, {} as Record<string, CjkNamePart>),
         Japanese: {} as Record<string, CjkNamePart>,
         Korean: {} as Record<string, CjkNamePart>
     };
@@ -138,5 +138,5 @@ export function splitName(name: string, transliterate: (text: string) => string,
     }
 
     // TODO: I'm going to add Korean support afterwards.
-    return CjkName.fromString(name, transliterate, Language[lang]);
+    return CjkName.fromString(name, transliterate, Language[lang], undefined, false, undefined);
 }
