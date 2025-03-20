@@ -54,10 +54,12 @@ export class CjkName {
         this.isName = isName == undefined ? familyName != undefined && givenName != undefined : isName;
     }
 
-    static fromString(name: string, transliterate: (text: string) => string,
+    static fromString(name: string,
                       language: Language,
+                      transliterate: (text: string) => string,
                       capitalize: boolean = true, // Capitalize compound family names, e.g. DongFang => Dongfang.
-                      allowDoubleFamilyName: boolean = true, doubleFamilyNameSplitter: string = '-'): CjkName {
+                      allowDoubleFamilyName: boolean = true,
+                      doubleFamilyNameSplitter: string = '-'): CjkName {
         return splitNameIter(name, allowDoubleFamilyName);
 
         function splitNameIter(name: string, allowDoubleFamilyName: boolean): CjkName {
@@ -128,7 +130,9 @@ export class CjkName {
 }
 
 // Split a name.
-export function splitName(name: string, transliterate: (text: string) => string, lang: string): CjkName {
+export function splitName(name: string,
+                          lang: string,
+                          transliterate: (text: string) => string = (_) => _): CjkName {
 
     // I'm not asking if it's Simplified or Traditional Chinese anymore.
     // Just query the name in both zh-CN and zh-TW. Should not affect the result.
@@ -138,5 +142,5 @@ export function splitName(name: string, transliterate: (text: string) => string,
     }
 
     // TODO: I'm going to add Korean support afterwards.
-    return CjkName.fromString(name, transliterate, Language[lang], undefined, false, undefined);
+    return CjkName.fromString(name, Language[lang], transliterate, undefined, false, undefined);
 }
