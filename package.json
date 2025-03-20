@@ -4,17 +4,32 @@
     "Luna Yao <me+github@zznq.buzz>"
   ],
   "description": "A script that transliterates CJK names.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/ZnqbuZ/SpellNames"
   },
   "scripts": {
-    "build": "tsc",
-    "copy": "copyfiles -u 1 \"src/**/*.json\" \"build\" && cp LICENSE build && cp README.md build && cp package.json build"
+    "build": "tsup",
+    "lint": "tsc",
+    "check-exports": "attw --pack .",
+    "ci": "npm run build && npm run check-exports && npm run lint"
   },
   "dependencies": {
     "@types/node": "^22.13.10"
+  },
+  "main": "dist/index.js",
+  "devDependencies": {
+    "terser": "^5.39.0",
+    "tsup": "^8.4.0",
+    "@arethetypeswrong/cli": "^0.17.4"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.js"
+    }
   }
 }
