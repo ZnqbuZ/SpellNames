@@ -8,18 +8,20 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ZnqbuZ/SpellNames"
+    "url": "git+https://github.com/ZnqbuZ/SpellNames.git"
   },
   "scripts": {
     "build": "tsup",
     "lint": "tsc",
     "check-exports": "attw --pack .",
-    "ci": "npm run build && npm run check-exports && npm run lint"
+    "ci": "npm run build && npm run check-exports && npm run lint",
+    "publish": "npm publish"
   },
   "dependencies": {
     "@types/node": "^22.13.10"
   },
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "devDependencies": {
     "terser": "^5.39.0",
     "tsup": "^8.4.0",
@@ -31,5 +33,10 @@
       "import": "./dist/index.mjs",
       "default": "./dist/index.js"
     }
-  }
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ]
 }
