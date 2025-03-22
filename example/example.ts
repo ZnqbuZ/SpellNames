@@ -1,7 +1,7 @@
 // import {CjkName, Language, splitName} from 'spellnames';
 import * as sn from '../dist/index.mjs';
 
-for (let name of ['陈李四', '欧阳王五', '刘六六六', '司马仲达', '阿里巴巴', 'John Smith', '肖发民']) {
+for (let name of ['陈李四', '肖发民', '尉迟融', '东方不败', '慕容复', '刘六六六', '司马仲达', '阿里巴巴', 'John Smith']) {
     console.log(sn.splitName(name, 'Chinese').isName);
     const cjkName = sn.CjkName.fromString(name, sn.Language.Chinese, (_) => _, true, false, undefined);
     console.log(cjkName)
