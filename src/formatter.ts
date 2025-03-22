@@ -18,7 +18,7 @@ export class CjkNamePart extends CjkNamePartBase {
     // I've committed these dict files to the repo.
     static dict: Record<Language, Record<string, CjkNamePart>> = {
         // It'll be more convenient if I need to add zh-HK or zh-SG in the future.
-        Chinese: [...require('../assets/zh-CN/merged.dict.json'), ...require('../assets/zh-TW/merged.dict.json')]
+        Chinese: [...require('../assets/names_hans.json'), ...require('../assets/names_hant.json')]
             .reduce((acc: Record<string, CjkNamePart>, {n, t}) => {
                 acc[n] = new CjkNamePart(n, t, Language.Chinese);
                 return acc;
